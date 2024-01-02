@@ -1,13 +1,14 @@
 const pokemonList = document.getElementById('pokemonList')
 const loadMoreButton = document.getElementById('loadMoreButton')
+const pokemonAbilitie = document.getElementsByClassName('modal')
 
 const maxRecords = 151
 const limit = 10
-let offset = 0;
+let offset = 0
 
 function convertPokemonToLi(pokemon) {
     return `
-        <li class="pokemon ${pokemon.type}">
+        <li class="pokemon ${pokemon.type}" onclick='abilitiesHtml(${pokemon.number})'>
             <span class="number">#${pokemon.number}</span>
             <span class="name">${pokemon.name}</span>
 
@@ -45,3 +46,24 @@ loadMoreButton.addEventListener('click', () => {
         loadPokemonItens(offset, limit)
     }
 })
+
+function abrirModal(skillName) {
+    const modal = document.querySelector("dialog")
+    modal.innerHTML += `<p>${skillName}</p>`
+    modal.showModal()   
+}
+
+async function abilitiesHtml(id) {
+    const skills = await pokeApi.getPokemonAbilities(id)
+    const skillsList = JSON.parse(skills)
+    for (val of skillsList) {
+        const skillName = val.ability.name
+        abrirModal(skillName)
+    }
+}
+
+function fecharModal() {
+    const modal = document.querySelector("dialog")
+    modal.innerHTML = `<h1 class="title-modal">Habilidades:</h1><button class="close" id="close" onclick="fecharModal()">&times;</button>`
+    modal.close()
+}
